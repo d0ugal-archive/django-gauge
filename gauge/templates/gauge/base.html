@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset=utf-8 />
+  <title>{% block title %}Django Gauge{% endblock %}</title>
+  <link rel="stylesheet" href="{{ STATIC_URL }}dashboard.css" type="text/css" media="screen" title="no title" charset="utf-8">
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.min.js" charset="utf-8"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery.flot.min.js" charset="utf-8"></script>
+  <script type="text/javascript" src="{{ STATIC_URL }}dddash.js" charset="utf-8"></script>
+  {% block extrahead %}{% endblock %}
+</head>
+<body>
+  <h1>{% block pagetitle %}Django Gauge{% endblock %}</h1>
+  {% block content %}{% endblock %}
+</body>
+</html>

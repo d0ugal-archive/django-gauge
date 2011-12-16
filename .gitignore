@@ -1,0 +1,14 @@
+docs/_build/*
+build
+*CACHE*
+dist
+MANIFEST
+*.pyc
+*.egg-info
+.coverage
+*.egg
+Vagrantfile
+tests/.tox/
+*.db
+/static_root/*
+tests/settings/local_private.py

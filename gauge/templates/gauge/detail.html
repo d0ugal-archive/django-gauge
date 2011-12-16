@@ -1,0 +1,11 @@
+{% extends "gauge/base.html" %}
+
+{% block title %}{{ benchmark.name }} - {{ block.super }}{% endblock %}
+{% block pagetitle %}{{ benchmark.name }}{% endblock %}
+{% block extrahead %}
+  <script type="text/javascript" src="{{ STATIC_URL }}metric.js" charset="utf-8"></script>
+{% endblock %}
+
+{% block content %}
+  <div id="graph" data-metric="{{ benchmark.name }}" data-control="{{ suite.control }}"  data-experiment="{{ suite.experiment }}"></div>
+{% endblock %}
