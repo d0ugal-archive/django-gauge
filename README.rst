@@ -1,14 +1,12 @@
+** Work in progress **
+
+
 Django gauge
 ========================================
+Automatically runs and displays the results of djangobench over time.
 
-Django Gauge is a runner and result store for djangobench. It automatillcay
-runs defined benhmark suites, that compare two versions of Django.
-
-This is still a work in progress and the result display greatly needs work to
-make it clearer and more useful, but its getting there.
 
 Thanks
 =========
-
 Thanks to Jacob Kaplan-Moss for creating djangobench and django-dev-dashboard
 (from which much code was borrowered).
