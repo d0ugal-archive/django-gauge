@@ -12,6 +12,24 @@ class Benchmark(models.Model):
     def __unicode__(self):
         return self.name
 
+    def gather_data(self, since, suite):
+        """
+        Gather data from an "instant" metric.
+
+        Instant metrics change every time we measure them, so they're easy:
+        just return every single measurement.
+        """
+        data = BenchmarkResult.objects.filter(suite=suite,
+            benchmark=self, run_date__gt=since).order_by('run_date'
+            ).values_list('run_date', 'avg_base', 'avg_changed')
+
+        data_sets = []
+        data_sets.append({'data': [(timegm(t.timetuple()), std)
+            for (t, std, __) in data]})
+        data_sets.append({'data': [(timegm(t.timetuple()), std)
+            for (t, __, std) in data]})
+        return data_sets
+
 
 class Branch(models.Model):
     name = models.CharField(max_length=30, unique=True)
@@ -24,6 +42,7 @@ class BenchmarkSuite(models.Model):
     control = models.ForeignKey(Branch, related_name="control_set")
     experiment = models.ForeignKey(Branch, related_name="experiment_set")
     benchmarks = models.ManyToManyField(Benchmark, through='gauge.BenchmarkResult')
+    benchmark_runs = models.PositiveIntegerField(default=1000)
 
     class Meta:
         unique_together = ['control', 'experiment', ]
@@ -56,21 +75,3 @@ class BenchmarkResult(models.Model):
     def __unicode__(self):
         return "%s (%s vs %s)" % (self.benchmark, self.suite.control,
             self.suite.experiment)
-
-    def gather_data(self, since):
-        """
-        Gather data from an "instant" metric.
-
-        Instant metrics change every time we measure them, so they're easy:
-        just return every single measurement.
-        """
-        data = BenchmarkResult.objects.filter(suite=self.suite,
-            benchmark=self.benchmark, run_date__gt=since).order_by('run_date'
-            ).values_list('run_date', 'avg_base', 'avg_changed')
-
-        data_sets = []
-        data_sets.append({'data': [(timegm(t.timetuple()), std)
-            for (t, std, __) in data]})
-        data_sets.append({'data': [(timegm(t.timetuple()), std)
-            for (t, __, std) in data]})
-        return data_sets

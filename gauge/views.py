@@ -6,7 +6,6 @@ from django.conf import settings
 from django.shortcuts import render, get_object_or_404
 from django.views.decorators.cache import cache_page
 from django.utils import simplejson
-from calendar import timegm
 from django.forms.models import model_to_dict
 
 from .models import Branch, Benchmark, BenchmarkSuite, BenchmarkResult
@@ -51,8 +50,7 @@ def metric_json(request, control, experiment, metric_slug):
     suite = get_object_or_404(BenchmarkSuite, control=control, experiment=exp)
 
     try:
-        metric = BenchmarkResult.objects.filter(benchmark__name=metric_slug,
-            suite=suite).latest()
+        benchmark = Benchmark.objects.get(name=metric_slug)
     except BenchmarkResult.DoesNotExist:
         raise http.Http404()
 
@@ -63,11 +61,10 @@ def metric_json(request, control, experiment, metric_slug):
 
     d = datetime.datetime.now() - datetime.timedelta(days=daysback)
 
-    doc = model_to_dict(metric)
-    doc['run_date'] = timegm(doc['run_date'].timetuple())
-    doc['data'] = metric.gather_data(since=d)
+    doc = model_to_dict(benchmark)
+    doc['data'] = benchmark.gather_data(since=d, suite=suite)
 
     return http.HttpResponse(
-        simplejson.dumps(doc, indent=2 if settings.DEBUG else None),
+        simplejson.dumps(doc, indent=4 if settings.DEBUG else None),
         content_type="application/json",
     )

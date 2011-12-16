@@ -112,7 +112,7 @@ setup(
     author='Dougal Matthews',
     author_email='dougal85@gmail.com',
     packages=find_packages(exclude=['tests', 'tests.*']),
-    package_data=find_package_data('gauge', only_in_packages=False),
+    package_data=find_package_data('.', only_in_packages=False),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
         'Framework :: Django',
@@ -127,5 +127,6 @@ setup(
     zip_safe=False,
     setup_requires=[
         'versiontools >= 1.6',
+        'Unipath',
     ],
 )

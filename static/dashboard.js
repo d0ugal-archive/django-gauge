@@ -12,9 +12,11 @@ $(function () {
 
             var options = {
                 xaxis: {show: false, mode: "time"},
-                yaxis: {show: false, min: 0},
+                yaxis: {show: true},
                 grid: {borderWidth: 0, hoverable: true},
-                colors: ["white", "yellow"]
+                colors: ["white", "yellow"],
+                lines: { show: true },
+                points: { show: true }
             };
 
             $.plot(e, response.data, options);

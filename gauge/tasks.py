@@ -2,12 +2,12 @@ from tempfile import mkdtemp
 from json import load
 
 from celery import task
-from django.conf import settings
 from djangobench.main import discover_benchmarks, DEFAULT_BENCMARK_DIR
 from unipath import Path
-from fabric.api import put, run, cd, get
+from fabric.api import put, run, cd, get, env, hide
 from fabulaws.ec2 import SmallLucidInstance
 
+from gauge import WORKER_BUNDLE
 from gauge.models import BenchmarkResult, Benchmark, BenchmarkSuite
 
 
@@ -15,9 +15,9 @@ class OldSmallLucidInstance(SmallLucidInstance):
     run_upgrade = False
 
 
-def _build_command(control, experiment, output):
+def _build_command(control, experiment, output, runs=1000):
     return ['djangobench', '--vcs=git', '--control=%s' % control,
-            '--trials=100', '--experiment=%s' % experiment,
+            '--trials=%s', '--experiment=%s' % experiment,
             '--record=%s' % output]
 
 
@@ -54,33 +54,37 @@ def run_benchmarks():
 
     results = []
 
+    env.output_prefix = False
+
     with OldSmallLucidInstance(terminate=True):
 
-        run('mkdir ~/gauge/')
-        run('mkdir ~/gauge/output/')
+        with hide('running', 'stdout', 'stderr'):
 
-        for f in ['bootstrap.sh', 'requirements.txt']:
-            local_f = Path(settings.WORKER_BUNDLE, f)
-            put(local_f, '~/gauge/', mirror_local_mode=True)
+            run('mkdir ~/gauge/')
+            run('mkdir ~/gauge/output/')
 
-        run('chmod +x ~/gauge/bootstrap.sh')
-        run('~/gauge/bootstrap.sh')
-        run('git clone https://github.com/django/django.git ~/gauge/django')
+            for f in ['bootstrap.sh', 'requirements.txt']:
+                local_f = Path(WORKER_BUNDLE, f)
+                put(local_f, '~/gauge/', mirror_local_mode=True)
 
-        for suite in BenchmarkSuite.objects.all():
+            run('chmod +x ~/gauge/bootstrap.sh')
+            run('~/gauge/bootstrap.sh')
+            run('git clone https://github.com/django/django.git ~/gauge/django')
 
-            record_dir = _get_temp_dir()
+            for suite in BenchmarkSuite.objects.all():
 
-            run('rm -rf ~/gauge/output/*')
+                record_dir = _get_temp_dir()
 
-            with cd('~/gauge/django'):
-                command = ' '.join(_build_command(suite.control,
-                    suite.experiment, '~/gauge/output/'))
-                run(command)
+                run('rm -rf ~/gauge/output/*')
 
-            get('~/gauge/output/', local_path=record_dir)
+                with cd('~/gauge/django'):
+                    command = ' '.join(_build_command(suite.control,
+                        suite.experiment, '~/gauge/output/', suite.benchmark_runs))
+                    run(command)
 
-            results.append((suite, record_dir.child('output')))
+                get('~/gauge/output/', local_path=record_dir)
+
+                results.append((suite, record_dir.child('output')))
 
     for suite, path in results:
         process_output(suite, path)

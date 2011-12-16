@@ -5,6 +5,10 @@ Django gauge
 ========================================
 Automatically runs and displays the results of djangobench over time.
 
+Currentlt, you will need to use the boto recognised enviroment settings to
+provide your AWS credentials. Benchmarks take a while, to avoid the eratic
+results (defaults at 1000 runs per test.)
+
 
 Thanks
 =========
