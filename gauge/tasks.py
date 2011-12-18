@@ -58,33 +58,31 @@ def run_benchmarks():
 
     with OldSmallLucidInstance(terminate=True):
 
-        with hide('running', 'stdout', 'stderr'):
+        run('mkdir ~/gauge/')
+        run('mkdir ~/gauge/output/')
 
-            run('mkdir ~/gauge/')
-            run('mkdir ~/gauge/output/')
+        for f in ['bootstrap.sh', 'requirements.txt']:
+            local_f = Path(WORKER_BUNDLE, f)
+            put(local_f, '~/gauge/', mirror_local_mode=True)
 
-            for f in ['bootstrap.sh', 'requirements.txt']:
-                local_f = Path(WORKER_BUNDLE, f)
-                put(local_f, '~/gauge/', mirror_local_mode=True)
+        run('chmod +x ~/gauge/bootstrap.sh')
+        run('~/gauge/bootstrap.sh')
+        run('git clone https://github.com/django/django.git ~/gauge/django')
 
-            run('chmod +x ~/gauge/bootstrap.sh')
-            run('~/gauge/bootstrap.sh')
-            run('git clone https://github.com/django/django.git ~/gauge/django')
+        for suite in BenchmarkSuite.objects.all():
 
-            for suite in BenchmarkSuite.objects.all():
+            record_dir = _get_temp_dir()
 
-                record_dir = _get_temp_dir()
+            run('rm -rf ~/gauge/output/*')
 
-                run('rm -rf ~/gauge/output/*')
+            with cd('~/gauge/django'):
+                command = ' '.join(_build_command(suite.control,
+                    suite.experiment, '~/gauge/output/', suite.benchmark_runs))
+                run(command)
 
-                with cd('~/gauge/django'):
-                    command = ' '.join(_build_command(suite.control,
-                        suite.experiment, '~/gauge/output/', suite.benchmark_runs))
-                    run(command)
+            get('~/gauge/output/', local_path=record_dir)
 
-                get('~/gauge/output/', local_path=record_dir)
-
-                results.append((suite, record_dir.child('output')))
+            results.append((suite, record_dir.child('output')))
 
     for suite, path in results:
         process_output(suite, path)
