@@ -17,7 +17,7 @@ class OldSmallLucidInstance(SmallLucidInstance):
 
 def _build_command(control, experiment, output, runs=1000):
     return ['djangobench', '--vcs=git', '--control=%s' % control,
-            '--trials=%s', '--experiment=%s' % experiment,
+            '--trials=%s' % runs, '--experiment=%s' % experiment,
             '--record=%s' % output]
 
 
