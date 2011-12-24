@@ -111,7 +111,7 @@ setup(
     long_description=read('README.rst'),
     author='Dougal Matthews',
     author_email='dougal85@gmail.com',
-    packages=find_packages(exclude=['tests', 'tests.*']),
+    packages=find_packages(exclude=['gauge_proj', 'gauge_proj.*']),
     package_data=find_package_data('.', only_in_packages=False),
     classifiers=[
         'Development Status :: 5 - Production/Stable',
@@ -127,6 +127,14 @@ setup(
     zip_safe=False,
     setup_requires=[
         'versiontools >= 1.6',
-        'Unipath',
+        'Unipath >= 0.2',
+    ],
+    install_requires=[
+        'celery >= 2.4',
+        'django-celery >= 2.4',
+        'fabric >= 1.3.3',
+        'paramiko >= 1.7',
+        'boto >= 2.1',
+        'Unipath >= 0.2',
     ],
 )

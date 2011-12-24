@@ -1,5 +1,2 @@
 -r requirements.txt
-coverage
-Sphinx
 tox
-versiontools

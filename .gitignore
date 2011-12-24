@@ -12,3 +12,4 @@ tests/.tox/
 *.db
 /static_root/*
 tests/settings/local_private.py
+/gauge_proj

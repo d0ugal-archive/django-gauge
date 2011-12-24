@@ -1,9 +1,2 @@
 -e git://github.com/caktus/fabulaws.git@28b83b935b54a502247b20c6285e4ac0974018a3#egg=fabulaws
--e git://github.com/jacobian/djangobench.git#egg=djangobench
-celery
-django-celery
-fabric
-psycopg2
-paramiko
-boto
 django>=1.3,<1.4
