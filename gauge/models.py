@@ -68,6 +68,8 @@ class BenchmarkResult(models.Model):
     std_base = models.FloatField()
     std_changed = models.FloatField()
 
+    raw = models.TextField()
+
     class Meta:
         ordering = ['benchmark__name', 'run_date', ]
         get_latest_by = 'run_date'

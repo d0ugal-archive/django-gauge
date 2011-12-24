@@ -1,5 +1,5 @@
 from tempfile import mkdtemp
-from json import load
+from json import loads
 
 from celery import task
 from djangobench.main import discover_benchmarks, DEFAULT_BENCMARK_DIR
@@ -31,7 +31,9 @@ def process_output(suite, path):
     for i, benchmark in enumerate(discover_benchmarks(DEFAULT_BENCMARK_DIR)):
 
         benchmark_result = path.child('%s.json' % benchmark.name)
-        benchmark_result = load(open(benchmark_result))
+        json_file = open(benchmark_result)
+        json_string = json_file.read()
+        benchmark_result = loads(json_string)
 
         result = benchmark_result['result']
 
@@ -46,7 +48,8 @@ def process_output(suite, path):
             min_changed=result['min_changed'], delta_min=result['delta_min'],
             avg_base=result['avg_base'], avg_changed=result['avg_changed'],
             delta_avg=result['delta_avg'], std_base=result['std_base'],
-            std_changed=result['std_changed'], delta_std=result['delta_std'])
+            std_changed=result['std_changed'], delta_std=result['delta_std'],
+            raw=json_string)
 
 
 @task.task()
