@@ -45,7 +45,7 @@ class BenchmarkSuite(models.Model):
     benchmark_runs = models.PositiveIntegerField(default=1000)
 
     class Meta:
-        unique_together = ['control', 'experiment', ]
+        unique_together = ['control', 'experiment', 'benchmark_runs']
 
     def __unicode__(self):
         return "%s -> %s" % (self.control, self.experiment)
