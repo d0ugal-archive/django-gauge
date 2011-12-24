@@ -4,7 +4,7 @@ from json import load
 from celery import task
 from djangobench.main import discover_benchmarks, DEFAULT_BENCMARK_DIR
 from unipath import Path
-from fabric.api import put, run, cd, get, env, hide
+from fabric.api import put, run, cd, get, env
 from fabulaws.ec2 import SmallLucidInstance
 
 from gauge import WORKER_BUNDLE
