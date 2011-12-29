@@ -1,4 +1,5 @@
+exclude gauge_proj/*
 include AUTHORS
-include README.rst
 include LICENSE
-exclude gauge_proj
+include README.rst
+include gauge/static/*
