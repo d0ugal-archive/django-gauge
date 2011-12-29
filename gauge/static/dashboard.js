@@ -5,7 +5,7 @@ $(function () {
             position: 'absolute',
             display: 'none',
             top: y + 5,
-            left: x + 5,
+            left: x -45,
             border: '1px solid #fdd',
             padding: '2px',
             opacity: 0.80,
@@ -46,10 +46,9 @@ $(function () {
                         previousPoint = item.dataIndex;
 
                         $("#tooltip").remove();
-                        var x = item.datapoint[0].toFixed(2),
-                            y = item.datapoint[1].toFixed(2);
 
-                        var d = new Date(1324740756 * 1000);
+                        console.log(item.datapoint);
+                        var d = new Date(item.datapoint[0] * 1000);
                         var label = $.plot.formatDate(d, "%y-%m-%d");
 
                         showTooltip(item.pageX, item.pageY, label);
