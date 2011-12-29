@@ -11,7 +11,7 @@ from django.forms.models import model_to_dict
 from .models import Branch, Benchmark, BenchmarkSuite, BenchmarkResult
 
 
-@cache_page(60 * 10)
+@cache_page(60 * 60)
 def index(request):
 
     suites = BenchmarkSuite.objects.all()
@@ -30,7 +30,7 @@ def index(request):
     })
 
 
-@cache_page(60 * 10)
+@cache_page(60 * 60)
 def metric_detail(request, control, experiment, metric_slug):
     control = get_object_or_404(Branch, name=control)
     exp = get_object_or_404(Branch, name=experiment)
@@ -43,7 +43,7 @@ def metric_detail(request, control, experiment, metric_slug):
     })
 
 
-@cache_page(60 * 10)
+@cache_page(60 * 60)
 def metric_json(request, control, experiment, metric_slug):
     control = get_object_or_404(Branch, name=control)
     exp = get_object_or_404(Branch, name=experiment)
