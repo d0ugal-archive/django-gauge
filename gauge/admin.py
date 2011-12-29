@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from gauge.models import BenchmarkResult, BenchmarkSuite, Branch
+from gauge.models import BenchmarkResult, BenchmarkSuite, Branch, Repository, PythonVersion
 
 
 class BranchAdmin(admin.ModelAdmin):
@@ -19,3 +19,5 @@ class BenchmarkSuiteAdmin(admin.ModelAdmin):
 admin.site.register(Branch, BranchAdmin)
 admin.site.register(BenchmarkResult, BenchmarkResultAdmin)
 admin.site.register(BenchmarkSuite, BenchmarkSuiteAdmin)
+admin.site.register(Repository)
+admin.site.register(PythonVersion)

@@ -2,6 +2,27 @@ from calendar import timegm
 from datetime import datetime
 from django.db import models
 
+VCS_CHOICES = (
+    ('git', 'git'),
+    ('hg', 'hg'),
+)
+
+
+class PythonVersion(models.Model):
+    name = models.CharField(max_length=15)
+    binary = models.CharField(max_length=15)
+
+    def __unicode__(self):
+        return "%s - %s" % (self.name, self.binary)
+
+
+class Repository(models.Model):
+    vcs_type = models.CharField(max_length=5, choices=VCS_CHOICES)
+    url = models.CharField(max_length=300)
+
+    def __unicode__(self):
+        return "%s - %s" % (self.vcs_type, self.url)
+
 
 class Benchmark(models.Model):
     name = models.CharField(max_length=100, unique=True)
@@ -39,13 +60,15 @@ class Branch(models.Model):
 
 
 class BenchmarkSuite(models.Model):
+    python_version = models.ForeignKey(PythonVersion)
+    repository = models.ForeignKey(Repository)
     control = models.ForeignKey(Branch, related_name="control_set")
     experiment = models.ForeignKey(Branch, related_name="experiment_set")
     benchmarks = models.ManyToManyField(Benchmark, through='gauge.BenchmarkResult')
     benchmark_runs = models.PositiveIntegerField(default=1000)
 
     class Meta:
-        unique_together = ['control', 'experiment', 'benchmark_runs']
+        unique_together = ['repository', 'control', 'experiment', 'benchmark_runs']
 
     def __unicode__(self):
         return "%s -> %s" % (self.control, self.experiment)

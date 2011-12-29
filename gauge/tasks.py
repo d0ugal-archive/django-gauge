@@ -8,15 +8,15 @@ from fabric.api import put, run, cd, get, env
 from fabulaws.ec2 import SmallLucidInstance
 
 from gauge import WORKER_BUNDLE
-from gauge.models import BenchmarkResult, Benchmark, BenchmarkSuite
+from gauge.models import BenchmarkResult, Benchmark, BenchmarkSuite, Repository
 
 
 class OldSmallLucidInstance(SmallLucidInstance):
     run_upgrade = False
 
 
-def _build_command(control, experiment, output, runs=1000):
-    return ['djangobench', '--vcs=git', '--control=%s' % control,
+def _build_command(control, experiment, output, vcs, runs=1000):
+    return ['djangobench', '--vcs=%s' % vcs, '--control=%s' % control,
             '--trials=%s' % runs, '--experiment=%s' % experiment,
             '--record=%s' % output]
 
@@ -70,7 +70,12 @@ def run_benchmarks():
 
         run('chmod +x ~/gauge/bootstrap.sh')
         run('~/gauge/bootstrap.sh')
-        run('git clone https://github.com/django/django.git ~/gauge/django')
+
+        for repo in Repository.objects.all():
+            if repo.vcs_type == 'git':
+                run('git clone %s ~/gauge/django_%s' % (repo.url, repo.id))
+            elif repo.vcs_type == 'hg':
+                run('hg clone %s ~/gauge/django_%s' % (repo.url, repo.id))
 
         for suite in BenchmarkSuite.objects.all():
 
@@ -78,9 +83,11 @@ def run_benchmarks():
 
             run('rm -rf ~/gauge/output/*')
 
-            with cd('~/gauge/django'):
+            with cd('~/gauge/django_%s' % suite.repository.id):
                 command = ' '.join(_build_command(suite.control,
-                    suite.experiment, '~/gauge/output/', suite.benchmark_runs))
+                    suite.experiment, '~/gauge/output/',
+                    suite.repository.vcs_type, suite.benchmark_runs))
+                print command
                 run(command)
 
             get('~/gauge/output/', local_path=record_dir)
