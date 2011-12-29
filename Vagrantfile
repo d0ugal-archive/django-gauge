@@ -3,8 +3,6 @@ Vagrant::Config.run do |config|
   config.vm.box = "lucid32"
   config.vm.box_url = "http://files.vagrantup.com/lucid32.box"
 
-  config.vm.share_folder("v-root", "/vagrant", ".", :nfs => true)
-
   config.vm.forward_port("ssh", 22, 2222, :auto => true)
 
   config.vm.network("33.33.33.81")

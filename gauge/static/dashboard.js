@@ -1,4 +1,19 @@
 $(function () {
+
+    function showTooltip(x, y, contents) {
+        $('<div id="tooltip">' + contents + '</div>').css( {
+            position: 'absolute',
+            display: 'none',
+            top: y + 5,
+            left: x + 5,
+            border: '1px solid #fdd',
+            padding: '2px',
+            opacity: 0.80,
+            color: '#000',
+            'background-color': '#fff'
+        }).appendTo("body").fadeIn(200);
+    }
+
     $("div.sparkline").each(function (index, elem) {
 
         var e = $(elem);
@@ -21,16 +36,32 @@ $(function () {
 
             $.plot(e, response.data, options);
 
+
+            var previousPoint = null;
+
             e.bind('plothover', function(event, pos, item) {
+
                 if (item) {
-                    value_element.html(item.datapoint[1]);
-                    var d = dddash.format_timestamp(item.datapoint[0], response.period);
-                    timestamp_element.html(d);
-                } else {
-                    value_element.html(original_value);
-                    timestamp_element.html('&nbsp;');
+                    if (previousPoint != item.dataIndex) {
+                        previousPoint = item.dataIndex;
+
+                        $("#tooltip").remove();
+                        var x = item.datapoint[0].toFixed(2),
+                            y = item.datapoint[1].toFixed(2);
+
+                        var d = new Date(1324740756 * 1000);
+                        var label = $.plot.formatDate(d, "%y-%m-%d");
+
+                        showTooltip(item.pageX, item.pageY, label);
+
+                    }
+                }
+                else {
+                    $("#tooltip").remove();
+                    previousPoint = null;
                 }
             });
+
         });
 
         e.click(function() {
