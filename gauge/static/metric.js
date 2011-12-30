@@ -1,7 +1,7 @@
 $(function () {
 
     var e = $("#graph");
-    var url = "/metric/" + e.data('control') + "/" + e.data('experiment') + "/" + e.data('metric') + ".json?days=365";
+    var url = "/metric/" + e.data('suite') + "/" + e.data('metric') + ".json?days=365";
 
     var hover = {
         show: function(x, y, message) {

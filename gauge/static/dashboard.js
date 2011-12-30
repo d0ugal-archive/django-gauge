@@ -21,7 +21,7 @@ $(function () {
         var timestamp_element = e.parent().find('span.timestamp');
         var original_value = value_element.html();
 
-        var url = "/metric/" + e.data('control') + "/" + e.data('experiment') + "/" + e.data('metric');
+        var url = "/metric/" + e.data('suite') + "/" + e.data('metric');
 
         $.getJSON(url + '.json', function(response) {
 
@@ -47,7 +47,6 @@ $(function () {
 
                         $("#tooltip").remove();
 
-                        console.log(item.datapoint);
                         var d = new Date(item.datapoint[0] * 1000);
                         var label = $.plot.formatDate(d, "%y-%m-%d");
 

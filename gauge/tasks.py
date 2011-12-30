@@ -1,11 +1,11 @@
-from tempfile import mkdtemp
 from json import loads
+from os import listdir
+from tempfile import mkdtemp
 
 from celery import task
-from djangobench.main import discover_benchmarks, DEFAULT_BENCMARK_DIR
-from unipath import Path
 from fabric.api import put, run, cd, get, env
 from fabulaws.ec2 import SmallLucidInstance
+from unipath import Path
 
 from gauge import WORKER_BUNDLE
 from gauge.models import BenchmarkResult, Benchmark, BenchmarkSuite, Repository
@@ -28,9 +28,11 @@ def _get_temp_dir():
 
 def process_output(suite, path):
 
-    for i, benchmark in enumerate(discover_benchmarks(DEFAULT_BENCMARK_DIR)):
+    for i, benchmark_output in enumerate(listdir(path)):
 
-        benchmark_result = path.child('%s.json' % benchmark.name)
+        name = benchmark_output.split('.')[0]
+
+        benchmark_result = path.child(benchmark_output)
         json_file = open(benchmark_result)
         json_string = json_file.read()
         benchmark_result = loads(json_string)
@@ -41,7 +43,7 @@ def process_output(suite, path):
             continue
 
         is_significant = result['t_msg'].startswith("Significant")
-        benchmark, created = Benchmark.objects.get_or_create(name=benchmark.name)
+        benchmark, created = Benchmark.objects.get_or_create(name=name)
 
         BenchmarkResult.objects.create(benchmark=benchmark, suite=suite,
             significant=is_significant, min_base=result['min_base'],
@@ -54,8 +56,6 @@ def process_output(suite, path):
 
 @task.task()
 def run_benchmarks():
-
-    results = []
 
     env.output_prefix = False
 
@@ -71,13 +71,13 @@ def run_benchmarks():
         run('chmod +x ~/gauge/bootstrap.sh')
         run('~/gauge/bootstrap.sh')
 
-        for repo in Repository.objects.all():
+        for repo in Repository.objects.filter(benchmarksuite__is_active=True).distinct():
             if repo.vcs_type == 'git':
                 run('git clone %s ~/gauge/django_%s' % (repo.url, repo.id))
             elif repo.vcs_type == 'hg':
                 run('hg clone %s ~/gauge/django_%s' % (repo.url, repo.id))
 
-        for suite in BenchmarkSuite.objects.all():
+        for suite in BenchmarkSuite.objects.filter(is_active=True):
 
             record_dir = _get_temp_dir()
 
@@ -92,9 +92,4 @@ def run_benchmarks():
 
             get('~/gauge/output/', local_path=record_dir)
 
-            results.append((suite, record_dir.child('output')))
-
-    for suite, path in results:
-        process_output(suite, path)
-
-    print "done."
+            process_output(suite, record_dir.child('output'))

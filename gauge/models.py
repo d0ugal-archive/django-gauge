@@ -66,9 +66,10 @@ class BenchmarkSuite(models.Model):
     experiment = models.ForeignKey(Branch, related_name="experiment_set")
     benchmarks = models.ManyToManyField(Benchmark, through='gauge.BenchmarkResult')
     benchmark_runs = models.PositiveIntegerField(default=1000)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
-        unique_together = ['repository', 'control', 'experiment', 'benchmark_runs']
+        unique_together = ['python_version', 'repository', 'control', 'experiment', 'benchmark_runs']
 
     def __unicode__(self):
         return "%s -> %s" % (self.control, self.experiment)

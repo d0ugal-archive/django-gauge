@@ -31,10 +31,8 @@ def index(request):
 
 
 @cache_page(60 * 60)
-def metric_detail(request, control, experiment, metric_slug):
-    control = get_object_or_404(Branch, name=control)
-    exp = get_object_or_404(Branch, name=experiment)
-    suite = get_object_or_404(BenchmarkSuite, control=control, experiment=exp)
+def metric_detail(request, suite_id, metric_slug):
+    suite = get_object_or_404(BenchmarkSuite, id=suite_id)
     benchmark = get_object_or_404(Benchmark, name=metric_slug)
 
     return render(request, 'gauge/detail.html', {
@@ -44,10 +42,8 @@ def metric_detail(request, control, experiment, metric_slug):
 
 
 @cache_page(60 * 60)
-def metric_json(request, control, experiment, metric_slug):
-    control = get_object_or_404(Branch, name=control)
-    exp = get_object_or_404(Branch, name=experiment)
-    suite = get_object_or_404(BenchmarkSuite, control=control, experiment=exp)
+def metric_json(request, suite_id, metric_slug):
+    suite = get_object_or_404(BenchmarkSuite, id=suite_id)
 
     try:
         benchmark = Benchmark.objects.get(name=metric_slug)

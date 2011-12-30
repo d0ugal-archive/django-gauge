@@ -7,5 +7,5 @@
 {% endblock %}
 
 {% block content %}
-  <div id="graph" data-metric="{{ benchmark.name }}" data-control="{{ suite.control }}"  data-experiment="{{ suite.experiment }}"></div>
+  <div id="graph" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}"></div>
 {% endblock %}
