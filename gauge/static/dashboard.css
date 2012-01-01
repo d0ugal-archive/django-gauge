@@ -111,14 +111,14 @@ p.updated {
 }
 
 .key{
-    font-size:20px;
+    color: red;
+    font-size: 2em;
 }
 
 .key span.control, .key span.experiment{
-    font-weight: 800;
+    font-size: 0.6em;
     padding: 5px;
     color: black;
-    min-width: 150px;
     display: inline-block;
 }
 
@@ -136,15 +136,11 @@ p.updated {
 }
 
 span.branch{
-    min-width: none;
+    font-weight: 800;
 }
 
-.suite h2{
-    margin-bottom: 0px;
-}
-
-.suite h4{
-    margin-top: 0px;
+.suite h2, .suite h4{
+    margin: 0px;
 }
 
 .tickLabel {

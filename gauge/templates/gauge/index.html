@@ -11,11 +11,14 @@
     <div class="suite">
 
       <h2 id="{{ suite.id }}">{{ suite.description }} </h2>
-      <h4 class="key">
-        {{ suite.benchmark_runs }} Runs Each On Python {{ suite.python_version.name }}<br/>
-        <span class="control">{{ suite.repository.url }}<span class="branch">{{ suite.control }}</span></span>
+      <h2 class="key">
+        <span class="control branch">{{ suite.control }}</span>
         <strong>vs</strong>
-        <span class="experiment">{{ suite.repository.url }}<span class="branch">{{ suite.experiment }}</span></span>
+        <span class="experiment branch">{{ suite.experiment }}</span>
+      </h2>
+      <h4>
+        Source: {{ suite.repository.url }}<br/>
+        {{ suite.benchmark_runs }} Runs Each On Python {{ suite.python_version.name }}<br/>
       </h4>
 
       {% if significant %}
