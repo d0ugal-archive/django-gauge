@@ -33,7 +33,7 @@ class Benchmark(models.Model):
     def __unicode__(self):
         return self.name
 
-    def gather_data(self, since, suite):
+    def gather_data(self, since, suite, significant_only):
         """
         Gather data from an "instant" metric.
 
@@ -41,8 +41,12 @@ class Benchmark(models.Model):
         just return every single measurement.
         """
         data = BenchmarkResult.objects.filter(suite=suite,
-            benchmark=self, run_date__gt=since).order_by('run_date'
-            ).values_list('run_date', 'avg_base', 'avg_changed')
+            benchmark=self, run_date__gt=since).order_by('run_date')
+
+        if significant_only:
+            data = data.filter(significant=True)
+
+        data = data.values_list('run_date', 'avg_base', 'avg_changed')
 
         data_sets = []
         data_sets.append({'data': [(timegm(t.timetuple()), std)
@@ -60,6 +64,7 @@ class Branch(models.Model):
 
 
 class BenchmarkSuite(models.Model):
+    description = models.TextField(default="")
     python_version = models.ForeignKey(PythonVersion)
     repository = models.ForeignKey(Repository)
     control = models.ForeignKey(Branch, related_name="control_set")
@@ -70,6 +75,9 @@ class BenchmarkSuite(models.Model):
 
     class Meta:
         unique_together = ['python_version', 'repository', 'control', 'experiment', 'benchmark_runs']
+
+    def significant_benchmarks(self):
+        return self.benchmarks.distinct().filter(benchmarkresult__significant=True)
 
     def __unicode__(self):
         return "%s -> %s" % (self.control, self.experiment)

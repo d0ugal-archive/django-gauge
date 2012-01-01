@@ -6,23 +6,34 @@
 
 {% block content %}
 
-  <div id="key">
-    <span class="control">Control</span> vs <span class="experiment">Experiment</span>
-  </div>
+  {% for suite in suites %}
 
-  {% for report in reports %}
+    <div class="suite">
 
-    <div class="metric benchmark has-sparkline">
+      <h2 id="{{ suite.id }}">{{ suite.description }} </h2>
+      <h4 class="key">
+        {{ suite.benchmark_runs }} Runs Each On Python {{ suite.python_version.name }}<br/>
+        <span class="control">{{ suite.repository.url }}<span class="branch">{{ suite.control }}</span></span>
+        <strong>vs</strong>
+        <span class="experiment">{{ suite.repository.url }}<span class="branch">{{ suite.experiment }}</span></span>
+      </h4>
 
-      <div class="summary">
-        <p>
-        {{ report.benchmark.name }}<br/>
-        (Control={{report.suite.control}},
-        Experiment={{report.suite.experiment}})
-        </p>
-      </div>
+      {% for benchmark in suite.significant_benchmarks %}
 
-      <div class="sparkline" id="spark{{ forloop.counter0 }}" data-metric="{{ report.benchmark.name }}" data-suite="{{ report.suite.id }}"></div>
+        <div class="metric benchmark has-sparkline">
+
+          <div class="summary">
+            <p>
+            <br/>
+            {{ benchmark.name }}
+            </p>
+          </div>
+
+          <div class="sparkline" id="spark{{ forloop.counter0 }}" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
+
+        </div>
+
+      {% endfor %}
 
     </div>
 

@@ -21,9 +21,15 @@ $(function () {
         var timestamp_element = e.parent().find('span.timestamp');
         var original_value = value_element.html();
 
-        var url = "/metric/" + e.data('suite') + "/" + e.data('metric');
+        var url = "/metric/" + e.data('suite') + "/" + e.data('metric') + '.json';
 
-        $.getJSON(url + '.json', function(response) {
+        var significant = e.data('significant');
+
+        if (significant == '1'){
+            url += "?significant";
+        }
+
+        $.getJSON(url, function(response) {
 
             var options = {
                 xaxis: {show: false, mode: "time"},

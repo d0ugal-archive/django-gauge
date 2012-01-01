@@ -62,7 +62,7 @@ div.summary {
 }
 
 div.metric div.summary {
-    font-family: "HelveticaNeue-CondensedBlack", "Helvetica Neue Condensed Black", "Impact", Helvetica, sans-serif;
+    font-family: "Helvetica Neue", Helvetica, sans-serif;
     text-align: center;
     margin: 0;
     padding: 0 12px;
@@ -110,27 +110,43 @@ p.updated {
     border-radius: 12px;
 }
 
-#key{
+.key{
     font-size:20px;
 }
 
-#key span{
+.key span.control, .key span.experiment{
     font-weight: 800;
     padding: 5px;
     color: black;
-    width: 150px;
+    min-width: 150px;
     display: inline-block;
 }
 
 
-#key span.control{
+.key span.control{
     font-weight: 800;
     background-color: white;
     padding: 5px;
 }
 
-#key span.experiment{
+.key span.experiment{
     font-weight: 800;
     background-color: yellow;
     padding: 5px;
+}
+
+span.branch{
+    min-width: none;
+}
+
+.suite h2{
+    margin-bottom: 0px;
+}
+
+.suite h4{
+    margin-top: 0px;
+}
+
+.tickLabel {
+    color: #fff;
 }

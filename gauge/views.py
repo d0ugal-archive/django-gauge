@@ -8,25 +8,19 @@ from django.views.decorators.cache import cache_page
 from django.utils import simplejson
 from django.forms.models import model_to_dict
 
-from .models import Branch, Benchmark, BenchmarkSuite, BenchmarkResult
+from .models import Benchmark, BenchmarkSuite, BenchmarkResult
 
 
 @cache_page(60 * 60)
 def index(request):
 
-    suites = BenchmarkSuite.objects.all()
+    significant = 'significant' in request.GET
 
-    reports = []
-
-    for suite in suites:
-        for benchmark in Benchmark.objects.distinct().filter(benchmarkresult__suite=suite):
-            reports.append({
-                'suite': suite,
-                'benchmark': benchmark,
-            })
+    suites = BenchmarkSuite.objects.distinct().filter(is_active=True)
 
     return render(request, 'gauge/index.html', {
-        'reports': reports,
+        'suites': suites,
+        'significant': significant,
     })
 
 
@@ -43,6 +37,9 @@ def metric_detail(request, suite_id, metric_slug):
 
 @cache_page(60 * 60)
 def metric_json(request, suite_id, metric_slug):
+
+    significant = 'significant' in request.GET
+
     suite = get_object_or_404(BenchmarkSuite, id=suite_id)
 
     try:
@@ -58,7 +55,7 @@ def metric_json(request, suite_id, metric_slug):
     d = datetime.datetime.now() - datetime.timedelta(days=daysback)
 
     doc = model_to_dict(benchmark)
-    doc['data'] = benchmark.gather_data(since=d, suite=suite)
+    doc['data'] = benchmark.gather_data(since=d, suite=suite, significant_only=significant)
 
     return http.HttpResponse(
         simplejson.dumps(doc, indent=4 if settings.DEBUG else None),
