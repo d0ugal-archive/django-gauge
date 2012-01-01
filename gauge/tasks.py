@@ -3,6 +3,7 @@ from os import listdir
 from tempfile import mkdtemp
 
 from celery import task
+from django.core.cache import cache
 from fabric.api import put, run, cd, get, env
 from fabulaws.ec2 import SmallLucidInstance
 from unipath import Path
@@ -93,3 +94,7 @@ def run_benchmarks():
             get('~/gauge/output/', local_path=record_dir)
 
             process_output(suite, record_dir.child('output'))
+
+    print "Done."
+
+    cache.clear()
