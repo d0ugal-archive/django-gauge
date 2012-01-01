@@ -18,22 +18,25 @@
         <span class="experiment">{{ suite.repository.url }}<span class="branch">{{ suite.experiment }}</span></span>
       </h4>
 
-      {% for benchmark in suite.significant_benchmarks %}
+      {% if significant %}
 
-        <div class="metric benchmark has-sparkline">
-
-          <div class="summary">
-            <p>
-            <br/>
-            {{ benchmark.name }}
-            </p>
+        {% for benchmark in suite.significant_benchmarks %}
+          <div class="metric benchmark has-sparkline">
+            <div class="summary"><p><br/>{{ benchmark.name }}</p></div>
+            <div class="sparkline" id="spark{{ forloop.counter0 }}" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
           </div>
+        {% endfor %}
 
-          <div class="sparkline" id="spark{{ forloop.counter0 }}" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
+      {% else %}
 
-        </div>
+        {% for benchmark in suite.benchmarks.distinct %}
+          <div class="metric benchmark has-sparkline">
+            <div class="summary"><p><br/>{{ benchmark.name }}</p></div>
+            <div class="sparkline" id="spark{{ forloop.counter0 }}" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
+          </div>
+        {% endfor %}
 
-      {% endfor %}
+      {% endif %}
 
     </div>
 
