@@ -13,7 +13,12 @@ class BenchmarkResultAdmin(admin.ModelAdmin):
 
 
 class BenchmarkSuiteAdmin(admin.ModelAdmin):
-    list_display = ('control', 'experiment', )
+    list_display = ('python_version', 'repository', 'control', 'experiment',
+        'benchmark_runs', 'is_active', 'results')
+    list_editable = ('is_active',)
+
+    def results(self, obj):
+        return BenchmarkResult.objects.filter(suite=obj.id).count()
 
 
 admin.site.register(Branch, BranchAdmin)
