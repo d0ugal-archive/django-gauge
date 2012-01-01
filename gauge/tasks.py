@@ -18,7 +18,7 @@ class OldSmallLucidInstance(SmallLucidInstance):
 def _build_command(control, experiment, output, vcs, runs=1000):
     return ['djangobench', '--vcs=%s' % vcs, '--control=%s' % control,
             '--trials=%s' % runs, '--experiment=%s' % experiment,
-            '--record=%s' % output]
+            '--record=%s' % output, '--continue-on-error']
 
 
 def _get_temp_dir():
