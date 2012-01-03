@@ -10,7 +10,7 @@
 
     <div class="suite">
 
-      <h2 id="{{ suite.id }}">{{ suite.description }} </h2>
+      <h2 id="suite{{ suite.id }}">{{ suite.description }} </h2>
       <h2 class="key">
         <span class="control branch">{{ suite.control }}</span>
         <strong>vs</strong>
@@ -24,7 +24,7 @@
       {% if significant %}
 
         {% for benchmark in suite.significant_benchmarks %}
-          <div class="metric benchmark has-sparkline">
+          <div id="suite{{ suite.id }}-{{ benchmark.name }}" class="metric benchmark has-sparkline">
             <div class="summary"><p><br/>{{ benchmark.name }}</p></div>
             <div class="sparkline" id="spark{{ forloop.counter0 }}" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
           </div>
@@ -33,7 +33,7 @@
       {% else %}
 
         {% for benchmark in suite.benchmarks.distinct %}
-          <div class="metric benchmark has-sparkline">
+          <div id="suite{{ suite.id }}-{{ benchmark.name }}" class="metric benchmark has-sparkline">
             <div class="summary"><p><br/>{{ benchmark.name }}</p></div>
             <div class="sparkline" id="spark{{ forloop.counter0 }}" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
           </div>
