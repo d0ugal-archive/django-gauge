@@ -55,7 +55,7 @@ class Benchmark(models.Model):
         else:
 
             fields = ['run_date', 'avg_base', 'avg_changed',
-                'min_base', 'min_changed', 'std_base', 'std_changed']
+                'min_base', 'min_changed']
 
         data = data.values_list(*fields)
 
