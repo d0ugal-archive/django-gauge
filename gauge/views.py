@@ -26,12 +26,16 @@ def index(request):
 
 @cache_page(60 * 60)
 def metric_detail(request, suite_id, metric_slug):
+
+    significant = 'significant' in request.GET
+
     suite = get_object_or_404(BenchmarkSuite, id=suite_id)
     benchmark = get_object_or_404(Benchmark, name=metric_slug)
 
     return render(request, 'gauge/detail.html', {
         'suite': suite,
         'benchmark': benchmark,
+        'significant': significant,
     })
 
 
@@ -39,6 +43,7 @@ def metric_detail(request, suite_id, metric_slug):
 def metric_json(request, suite_id, metric_slug):
 
     significant = 'significant' in request.GET
+    detail = 'detail' in request.GET
 
     suite = get_object_or_404(BenchmarkSuite, id=suite_id)
 
@@ -55,7 +60,7 @@ def metric_json(request, suite_id, metric_slug):
     d = datetime.datetime.now() - datetime.timedelta(days=daysback)
 
     doc = model_to_dict(benchmark)
-    doc['data'] = benchmark.gather_data(since=d, suite=suite, significant_only=significant)
+    doc['data'] = benchmark.gather_data(since=d, suite=suite, significant_only=significant, detail=detail)
 
     return http.HttpResponse(
         simplejson.dumps(doc, indent=4 if settings.DEBUG else None),

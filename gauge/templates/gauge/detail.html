@@ -7,5 +7,18 @@
 {% endblock %}
 
 {% block content %}
-  <div id="graph" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}"></div>
+
+  <h2 id="suite{{ suite.id }}">{{ suite.description }} </h2>
+  <h2 class="key">
+    <span class="control branch">{{ suite.control }}</span>
+    <strong>vs</strong>
+    <span class="experiment branch">{{ suite.experiment }}</span>
+  </h2>
+  <h4>
+    Source: {{ suite.repository.url }}<br/>
+    {{ suite.benchmark_runs }} Runs Each On Python {{ suite.python_version.name }}<br/>
+  </h4>
+
+  <div id="graph" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
+
 {% endblock %}

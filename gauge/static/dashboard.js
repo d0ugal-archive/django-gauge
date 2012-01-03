@@ -21,15 +21,23 @@ $(function () {
         var timestamp_element = e.parent().find('span.timestamp');
         var original_value = value_element.html();
 
-        var url = "/metric/" + e.data('suite') + "/" + e.data('metric') + '.json';
+        var url = "/metric/" + e.data('suite') + "/" + e.data('metric');
+        var json_url = url + '.json';
 
         var significant = e.data('significant');
 
         if (significant == '1'){
+            json_url += "?significant";
             url += "?significant";
         }
 
-        $.getJSON(url, function(response) {
+        $.getJSON(json_url, function(response) {
+
+            for(var i=0;i<response.data.length;i++){
+                for(var y=0; y<response.data[i].data.length;y++){
+                    response.data[i].data[y][0] *= 1000;
+                }
+            }
 
             var options = {
                 xaxis: {show: false, mode: "time"},
@@ -37,7 +45,10 @@ $(function () {
                 grid: {borderWidth: 0, hoverable: true},
                 colors: ["white", "yellow"],
                 lines: { show: true },
-                points: { show: true }
+                points: { show: true },
+                legend: {
+                    show: false
+                }
             };
 
             $.plot(e, response.data, options);
@@ -53,7 +64,7 @@ $(function () {
 
                         $("#tooltip").remove();
 
-                        var d = new Date(item.datapoint[0] * 1000);
+                        var d = new Date(item.datapoint[0]);
                         var date_string = $.plot.formatDate(d, "%0d %b %y");
                         var value = Math.round(item.datapoint[1] * 100000000) / 100000000;
                         var label = "<strong>" + value + "</strong><br/>" + date_string;

@@ -33,7 +33,7 @@ class Benchmark(models.Model):
     def __unicode__(self):
         return self.name
 
-    def gather_data(self, since, suite, significant_only):
+    def gather_data(self, since, suite, significant_only, detail=False):
         """
         Gather data from an "instant" metric.
 
@@ -46,13 +46,34 @@ class Benchmark(models.Model):
         if significant_only:
             data = data.filter(significant=True)
 
-        data = data.values_list('run_date', 'avg_base', 'avg_changed')
-
         data_sets = []
-        data_sets.append({'data': [(timegm(t.timetuple()), std)
-            for (t, std, __) in data]})
-        data_sets.append({'data': [(timegm(t.timetuple()), std)
-            for (t, __, std) in data]})
+
+        if not detail:
+
+            fields = ['run_date', 'avg_base', 'avg_changed']
+
+        else:
+
+            fields = ['run_date', 'avg_base', 'avg_changed',
+                'min_base', 'min_changed', 'std_base', 'std_changed']
+
+        data = data.values_list(*fields)
+
+        for i, field in enumerate(fields):
+
+            if field == 'run_date':
+                continue
+
+            data_values = []
+
+            for values in data:
+                data_values.append((timegm(values[0].timetuple()), values[i]))
+
+            data_sets.append({
+                'label': field,
+                'data': data_values,
+            })
+
         return data_sets
 
 
