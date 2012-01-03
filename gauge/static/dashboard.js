@@ -54,7 +54,9 @@ $(function () {
                         $("#tooltip").remove();
 
                         var d = new Date(item.datapoint[0] * 1000);
-                        var label = $.plot.formatDate(d, "%y-%m-%d");
+                        var date_string = $.plot.formatDate(d, "%0d %b %y");
+                        var value = Math.round(item.datapoint[1] * 100000000) / 100000000;
+                        var label = "<strong>" + value + "</strong><br/>" + date_string;
 
                         showTooltip(item.pageX, item.pageY, label);
 
