@@ -18,6 +18,9 @@ def index(request):
 
     suites = BenchmarkSuite.objects.distinct().filter(is_active=True)
 
+    if not request.user.is_authenticated():
+        suites = suites.filter(show_on_dashboard=True)
+
     return render(request, 'gauge/index.html', {
         'suites': suites,
         'significant': significant,

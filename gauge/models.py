@@ -93,8 +93,10 @@ class BenchmarkSuite(models.Model):
     benchmarks = models.ManyToManyField(Benchmark, through='gauge.BenchmarkResult')
     benchmark_runs = models.PositiveIntegerField(default=1000)
     is_active = models.BooleanField(default=True)
+    show_on_dashboard = models.BooleanField(default=True)
 
     class Meta:
+        ordering = ['id', ]
         unique_together = ['python_version', 'repository', 'control', 'experiment', 'benchmark_runs']
 
     def significant_benchmarks(self):

@@ -40,8 +40,8 @@ $(function () {
             }
 
             var options = {
-                xaxis: {show: false, mode: "time"},
-                yaxis: {show: true},
+                xaxis: {mode: "time"},
+                yaxis: {show: true, min: 0},
                 grid: {borderWidth: 0, hoverable: true},
                 colors: ["white", "yellow"],
                 lines: { show: true },

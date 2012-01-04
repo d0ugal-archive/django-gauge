@@ -46,11 +46,17 @@ $(function () {
         var options = {
             xaxis: {
                 mode: "time",
-                tickColor: "rgba(0,0,0,0)",
                 show: true
             },
-            yaxis: {min: 0, ticks: 10},
-            grid: {borderWidth: 0, hoverable: true, color: "white"},
+            yaxis: {
+                min: 0,
+                ticks: 10
+            },
+            grid: {
+                borderWidth: 0,
+                hoverable: true,
+                color: "white"
+            },
             lines: { show: true },
             points: { show: true },
             legend: {
@@ -69,7 +75,9 @@ $(function () {
                     return string;
                 },
                 margin: [-100, 0]
-            }
+            },
+            colors: ["white", "yellow"]
+
         };
         var plot = $.plot(e, response.data, options);
 

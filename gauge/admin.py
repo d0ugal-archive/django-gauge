@@ -14,8 +14,9 @@ class BenchmarkResultAdmin(admin.ModelAdmin):
 
 class BenchmarkSuiteAdmin(admin.ModelAdmin):
     list_display = ('python_version', 'repository', 'control', 'experiment',
-        'benchmark_runs', 'is_active', 'results')
-    list_editable = ('is_active',)
+        'benchmark_runs', 'is_active', 'show_on_dashboard', 'results')
+    list_editable = ('is_active', 'show_on_dashboard',)
+    save_as = True
 
     def results(self, obj):
         return BenchmarkResult.objects.filter(suite=obj.id).count()
