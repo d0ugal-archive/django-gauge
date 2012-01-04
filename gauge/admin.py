@@ -11,6 +11,10 @@ class BenchmarkResultAdmin(admin.ModelAdmin):
     list_display = ('benchmark', 'suite', 'significant', 'delta_std', 'run_date',)
     list_filter = ('significant', 'suite', 'benchmark',)
 
+    def queryset(self, request):
+        qs = super(BenchmarkResultAdmin, self).queryset(request)
+        return qs.defer("raw")
+
 
 class BenchmarkSuiteAdmin(admin.ModelAdmin):
     list_display = ('python_version', 'repository', 'control', 'experiment',
