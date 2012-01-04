@@ -55,7 +55,7 @@ def process_output(suite, path):
             raw=json_string)
 
 
-@task.task()
+@task.task(ignore_result=True)
 def run_benchmarks():
 
     env.output_prefix = False
