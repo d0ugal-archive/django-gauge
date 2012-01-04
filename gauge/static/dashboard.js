@@ -14,14 +14,32 @@ $(function () {
         }).appendTo("body").fadeIn(200);
     }
 
-    $("div.sparkline").each(function (index, elem) {
+    $("div.sparkline").each(function(index, elem) {
 
         var e = $(elem);
-        var value_element = e.parent().find('p.value a');
-        var timestamp_element = e.parent().find('span.timestamp');
-        var original_value = value_element.html();
-
         var url = "/metric/" + e.data('suite') + "/" + e.data('metric');
+
+        var significant = e.data('significant');
+
+        if (significant == '1'){
+            url += "?significant";
+        }
+
+        e.click(function(){
+
+            window.location = url;
+
+        });
+
+    });
+
+    $("div.suite").each(function (index, elem) {
+
+        var e = $(elem);
+        var timestamp_element = e.parent().find('span.timestamp');
+
+        var suite_id = e.data('suite');
+        var url = "/metric/" + suite_id;
         var json_url = url + '.json';
 
         var significant = e.data('significant');
@@ -33,56 +51,59 @@ $(function () {
 
         $.getJSON(json_url, function(response) {
 
-            for(var i=0;i<response.data.length;i++){
-                for(var y=0; y<response.data[i].data.length;y++){
-                    response.data[i].data[y][0] *= 1000;
-                }
-            }
+            $.each(response, function(index, benchmark_data){
 
-            var options = {
-                xaxis: {mode: "time"},
-                yaxis: {show: true},
-                grid: {borderWidth: 0, hoverable: true},
-                colors: ["white", "yellow"],
-                lines: { show: true },
-                points: { show: true },
-                legend: {
-                    show: false
-                }
-            };
+                var options = {
+                    xaxis: {mode: "time"},
+                    yaxis: {show: true},
+                    grid: {borderWidth: 0, hoverable: true},
+                    colors: ["white", "yellow"],
+                    lines: { show: true },
+                    points: { show: true },
+                    legend: {
+                        show: false
+                    }
+                };
 
-            $.plot(e, response.data, options);
+                var benchmark_name = benchmark_data.name;
 
+                var spark = $("#suite" + suite_id + "-" + benchmark_name + " div.sparkline");
 
-            var previousPoint = null;
-
-            e.bind('plothover', function(event, pos, item) {
-
-                if (item) {
-                    if (previousPoint != item.dataIndex) {
-                        previousPoint = item.dataIndex;
-
-                        $("#tooltip").remove();
-
-                        var d = new Date(item.datapoint[0]);
-                        var date_string = $.plot.formatDate(d, "%0d %b %y");
-                        var value = Math.round(item.datapoint[1] * 100000000) / 100000000;
-                        var label = "<strong>" + value + "</strong><br/>" + date_string;
-
-                        showTooltip(item.pageX, item.pageY, label);
-
+                for(var i=0;i<benchmark_data.data.length;i++){
+                    for(var y=0; y<benchmark_data.data[i].data.length;y++){
+                        benchmark_data.data[i].data[y][0] *= 1000;
                     }
                 }
-                else {
-                    $("#tooltip").remove();
-                    previousPoint = null;
-                }
+
+                $.plot(spark, benchmark_data.data, options);
+
+                var previousPoint = null;
+
+                spark.bind('plothover', function(event, pos, item) {
+
+                    if (item) {
+                        if (previousPoint != item.dataIndex) {
+                            previousPoint = item.dataIndex;
+
+                            $("#tooltip").remove();
+
+                            var d = new Date(item.datapoint[0]);
+                            var date_string = $.plot.formatDate(d, "%0d %b %y");
+                            var value = Math.round(item.datapoint[1] * 100000000) / 100000000;
+                            var label = "<strong>" + value + "</strong><br/>" + date_string;
+
+                            showTooltip(item.pageX, item.pageY, label);
+
+                        }
+                    }
+                    else {
+                        $("#tooltip").remove();
+                        previousPoint = null;
+                    }
+                });
+
             });
 
-        });
-
-        e.click(function() {
-            window.location = url;
         });
 
     });

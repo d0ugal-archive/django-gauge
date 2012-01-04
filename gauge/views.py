@@ -18,11 +18,12 @@ def index(request, suite_id=None):
 
     if not suite_id:
         suites = BenchmarkSuite.objects.distinct().filter(is_active=True)
+
+        if not request.user.is_authenticated():
+            suites = suites.filter(show_on_dashboard=True)
+
     else:
         suites = [get_object_or_404(BenchmarkSuite, pk=suite_id)]
-
-    if not request.user.is_authenticated():
-        suites = suites.filter(show_on_dashboard=True)
 
     return render(request, 'gauge/index.html', {
         'suites': suites,
@@ -46,17 +47,23 @@ def metric_detail(request, suite_id, metric_slug):
 
 
 @cache_page(60 * 60)
-def metric_json(request, suite_id, metric_slug):
+def metric_json(request, suite_id, metric_slug=None):
 
     significant = 'significant' in request.GET
     detail = 'detail' in request.GET
 
     suite = get_object_or_404(BenchmarkSuite, id=suite_id)
 
-    try:
-        benchmark = Benchmark.objects.get(name=metric_slug)
-    except BenchmarkResult.DoesNotExist:
-        raise http.Http404()
+    if metric_slug:
+        try:
+            benchmarks = [Benchmark.objects.get(name=metric_slug)]
+        except BenchmarkResult.DoesNotExist:
+            raise http.Http404()
+    else:
+        if significant:
+            benchmarks = suite.significant_benchmarks()
+        else:
+            benchmarks = suite.benchmarks.distinct().all()
 
     try:
         daysback = int(request.GET['days'])
@@ -65,10 +72,19 @@ def metric_json(request, suite_id, metric_slug):
 
     d = datetime.datetime.now() - datetime.timedelta(days=daysback)
 
-    doc = model_to_dict(benchmark)
-    doc['data'] = benchmark.gather_data(since=d, suite=suite, significant_only=significant, detail=detail)
+    docs = []
+    for benchmark in benchmarks:
+        doc = model_to_dict(benchmark)
+        doc['data'] = benchmark.gather_data(since=d, suite=suite,
+            significant_only=significant, detail=detail)
+        docs.append(doc)
+
+    # HACK: If we have a metric slug, we only want to return one. Not all.
+    if metric_slug:
+        assert len(docs) == 1, len(docs)
+        docs = docs[0]
 
     return http.HttpResponse(
-        simplejson.dumps(doc, indent=4 if settings.DEBUG else None),
+        simplejson.dumps(docs, indent=4 if settings.DEBUG else None),
         content_type="application/json",
     )

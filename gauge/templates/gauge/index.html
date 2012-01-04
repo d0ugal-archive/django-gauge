@@ -8,7 +8,7 @@
 
   {% for suite in suites %}
 
-    <div class="suite">
+    <div class="suite" data-suite="{{ suite.id }}"  data-significant="{% if significant %}1{% else %}0{% endif %}">
 
       <h2 id="suite{{ suite.id }}">{{ suite.description }} </h2>
       <h2 class="key">
