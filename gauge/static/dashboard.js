@@ -41,7 +41,7 @@ $(function () {
 
             var options = {
                 xaxis: {mode: "time"},
-                yaxis: {show: true, min: 0},
+                yaxis: {show: true},
                 grid: {borderWidth: 0, hoverable: true},
                 colors: ["white", "yellow"],
                 lines: { show: true },
