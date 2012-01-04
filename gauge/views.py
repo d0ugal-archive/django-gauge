@@ -17,11 +17,8 @@ def index(request, suite_id=None):
     significant = 'significant' in request.GET
 
     if not suite_id:
-        suites = BenchmarkSuite.objects.distinct().filter(is_active=True)
-
-        if not request.user.is_authenticated():
-            suites = suites.filter(show_on_dashboard=True)
-
+        suites = BenchmarkSuite.objects.distinct().filter(
+                                    is_active=True, show_on_dashboard=True)
     else:
         suites = [get_object_or_404(BenchmarkSuite, pk=suite_id)]
 
