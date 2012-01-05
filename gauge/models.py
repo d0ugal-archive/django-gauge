@@ -59,8 +59,9 @@ class Benchmark(models.Model):
 
             else:
 
-                fields = ['run_date', 'avg_base', 'avg_changed',
-                    'min_base', 'min_changed']
+                fields = ['run_date', 'avg_base', 'avg_changed']
+                if not multi:
+                    fields.extend(['min_base', 'min_changed'])
 
             data = data.values_list(*fields)
 
