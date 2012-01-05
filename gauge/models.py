@@ -75,6 +75,10 @@ class Benchmark(models.Model):
                 for values in data:
                     data_values.append((timegm(values[0].timetuple()), values[i]))
 
+                field = field.upper()
+                field = field.replace('_BASE', " time %s" % suite.control.name)
+                field = field.replace('_CHANGED', " time %s" % suite.experiment.name)
+
                 if multi:
                     field_label = "%s (%s)" % (field, suite.description)
                 else:
