@@ -101,6 +101,11 @@ p.updated {
     margin: 0 auto;
 }
 
+#legend{
+    margin: 0 auto;
+
+}
+
 #hover {
     position: absolute;
     display: none;

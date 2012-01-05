@@ -12,15 +12,16 @@ from .models import Benchmark, BenchmarkSuite, BenchmarkResult
 
 
 @cache_page(60 * 60)
-def index(request, suite_id=None):
+def index(request, suite_ids=None):
 
     significant = 'significant' in request.GET
 
-    if not suite_id:
+    if not suite_ids:
         suites = BenchmarkSuite.objects.distinct().filter(
                                     is_active=True, show_on_dashboard=True)
     else:
-        suites = [get_object_or_404(BenchmarkSuite, pk=suite_id)]
+        suite_ids = suite_ids.split('+')
+        suites = BenchmarkSuite.objects.filter(pk__in=suite_ids)
 
     return render(request, 'gauge/index.html', {
         'suites': suites,
@@ -29,27 +30,32 @@ def index(request, suite_id=None):
 
 
 @cache_page(60 * 60)
-def metric_detail(request, suite_id, metric_slug):
+def metric_detail(request, suite_ids, metric_slug):
 
     significant = 'significant' in request.GET
 
-    suite = get_object_or_404(BenchmarkSuite, id=suite_id)
+    suite_ids_list = suite_ids.split('+')
+    suites = BenchmarkSuite.objects.filter(pk__in=suite_ids_list)
     benchmark = get_object_or_404(Benchmark, name=metric_slug)
 
     return render(request, 'gauge/detail.html', {
-        'suite': suite,
+        'suites': suites,
         'benchmark': benchmark,
         'significant': significant,
+        'suite_ids': suite_ids,
+        'versus': len(suites) > 1,
+        'suite': suites[0],
     })
 
 
 @cache_page(60 * 60)
-def metric_json(request, suite_id, metric_slug=None):
+def metric_json(request, suite_ids, metric_slug=None):
 
     significant = 'significant' in request.GET
     detail = 'detail' in request.GET
 
-    suite = get_object_or_404(BenchmarkSuite, id=suite_id)
+    suite_ids_list = suite_ids.split('+')
+    suites = BenchmarkSuite.objects.filter(pk__in=suite_ids_list)
 
     if metric_slug:
         try:
@@ -57,10 +63,9 @@ def metric_json(request, suite_id, metric_slug=None):
         except BenchmarkResult.DoesNotExist:
             raise http.Http404()
     else:
+        benchmarks = Benchmark.objects.distinct().filter(benchmarksuite__pk__in=suite_ids_list)
         if significant:
-            benchmarks = suite.significant_benchmarks()
-        else:
-            benchmarks = suite.benchmarks.distinct().all()
+            benchmarks = benchmarks.filter(benchmarkresult__significant=True)
 
     try:
         daysback = int(request.GET['days'])
@@ -72,7 +77,7 @@ def metric_json(request, suite_id, metric_slug=None):
     docs = []
     for benchmark in benchmarks:
         doc = model_to_dict(benchmark)
-        doc['data'] = benchmark.gather_data(since=d, suite=suite,
+        doc['data'] = benchmark.gather_data(since=d, suites=suites,
             significant_only=significant, detail=detail)
         docs.append(doc)
 

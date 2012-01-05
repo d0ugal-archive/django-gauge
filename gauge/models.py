@@ -33,46 +33,56 @@ class Benchmark(models.Model):
     def __unicode__(self):
         return self.name
 
-    def gather_data(self, since, suite, significant_only, detail=False):
+    def gather_data(self, since, suites, significant_only, detail=False):
         """
         Gather data from an "instant" metric.
 
         Instant metrics change every time we measure them, so they're easy:
         just return every single measurement.
         """
-        data = BenchmarkResult.objects.filter(suite=suite,
-            benchmark=self, run_date__gt=since).order_by('run_date')
-
-        if significant_only:
-            data = data.filter(significant=True)
 
         data_sets = []
 
-        if not detail:
+        multi = len(suites) > 1
 
-            fields = ['run_date', 'avg_base', 'avg_changed']
+        for suite in suites:
 
-        else:
+            data = BenchmarkResult.objects.filter(suite=suite,
+                benchmark=self, run_date__gt=since).order_by('run_date')
 
-            fields = ['run_date', 'avg_base', 'avg_changed',
-                'min_base', 'min_changed']
+            if significant_only:
+                data = data.filter(significant=True)
 
-        data = data.values_list(*fields)
+            if not detail:
 
-        for i, field in enumerate(fields):
+                fields = ['run_date', 'avg_base', 'avg_changed']
 
-            if field == 'run_date':
-                continue
+            else:
 
-            data_values = []
+                fields = ['run_date', 'avg_base', 'avg_changed',
+                    'min_base', 'min_changed']
 
-            for values in data:
-                data_values.append((timegm(values[0].timetuple()), values[i]))
+            data = data.values_list(*fields)
 
-            data_sets.append({
-                'label': field,
-                'data': data_values,
-            })
+            for i, field in enumerate(fields):
+
+                if field == 'run_date':
+                    continue
+
+                data_values = []
+
+                for values in data:
+                    data_values.append((timegm(values[0].timetuple()), values[i]))
+
+                if multi:
+                    field_label = "%s (%s)" % (field, suite.description)
+                else:
+                    field_label = field
+
+                data_sets.append({
+                    'label': field_label,
+                    'data': data_values,
+                })
 
         return data_sets
 

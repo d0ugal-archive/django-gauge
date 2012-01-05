@@ -8,17 +8,28 @@
 
 {% block content %}
 
-  <h2 id="suite{{ suite.id }}">{{ suite.description }} </h2>
-  <h2 class="key">
-    <span class="control branch">{{ suite.control }}</span>
-    <strong>vs</strong>
-    <span class="experiment branch">{{ suite.experiment }}</span>
-  </h2>
-  <h4>
-    Source: {{ suite.repository.url }}<br/>
-    {{ suite.benchmark_runs }} Runs Each On Python {{ suite.python_version.name }}<br/>
-  </h4>
+  {% if versus %}
 
-  <div id="graph" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
+    <h2 id="suite{{ suite_ids }}">{{ suites.0.description }}</h2>
+    and
+    <h2>{{ suites.1.description }}</h2>
+
+  {% else %}
+
+    <h2 id="suite{{ suite_ids }}">{{ suite.description }} </h2>
+    <h2 class="key">
+      <span class="control branch">{{ suite.control }}</span>
+      <strong>vs</strong>
+      <span class="experiment branch">{{ suite.experiment }}</span>
+    </h2>
+    <h4>
+      Source: {{ suite.repository.url }}<br/>
+      {{ suite.benchmark_runs }} Runs Each On Python {{ suite.python_version.name }}<br/>
+    </h4>
+
+  {% endif %}
+
+  <div id="graph" data-metric="{{ benchmark.name }}" data-suite="{{ suite_ids }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
+  <div id="legend"></div>
 
 {% endblock %}

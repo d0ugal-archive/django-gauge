@@ -43,6 +43,14 @@ $(function () {
             }
         }
 
+        var choiceContainer = $("#legend");
+        $.each(response.data, function(key, val) {
+            choiceContainer.append('<br/><input type="checkbox" name="' + key +
+                                   '" checked="checked" id="id' + key + '">' +
+                                   '<label for="id' + key + '">' + val.label + '</label>');
+        });
+        choiceContainer.find("input").click(plotAccordingToChoices);
+
         var options = {
             xaxis: {
                 mode: "time",
@@ -61,24 +69,34 @@ $(function () {
             points: { show: true },
             legend: {
                 show: true,
-                backgroundColor: 'rgba(0,0,0,1)',
                 labelFormatter: function(string, series){
                     if (string.indexOf("_base") != -1){
-                        string = string.replace("_base", "");
-                        return string.toUpperCase() + " " + $('.control.branch').html();
-
+                        return string.replace("_base", " control");
                     } else if (string.indexOf("_changed") != -1){
-                        string = string.replace("_changed", "");
-                        return string.toUpperCase() + " " + $('.experiment.branch').html();
-
+                        return string.replace("_changed", " exp");
                     }
                     return string;
                 },
-                margin: [-100, 0]
-            },
-            colors: ["white", "yellow"]
+                backgroundColor: 'rgba(0,0,0,0.5)',
+                position: 'sw'
+            }
 
         };
+
+        function plotAccordingToChoices() {
+            var data = [];
+
+            choiceContainer.find("input:checked").each(function () {
+                var key = $(this).attr("name");
+                if (key && response.data[key])
+                    data.push(response.data[key]);
+            });
+
+            if (data.length > 0)
+                $.plot(e, data, options);
+        }
+
+
         var plot = $.plot(e, response.data, options);
 
         var previousPoint = null;
