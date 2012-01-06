@@ -21,11 +21,13 @@
         {{ suite.benchmark_runs }} Runs Each On Python {{ suite.python_version.name }}<br/>
       </h4>
 
+      <p><em>Bechmark time measured in seconds, lower scores are better</em></p>
+
       {% if significant %}
 
         {% for benchmark in suite.significant_benchmarks %}
           <div id="suite{{ suite.id }}-{{ benchmark.name }}" class="metric benchmark has-sparkline">
-            <div class="summary"><p><br/>{{ benchmark.name }}</p></div>
+            <div class="summary"><p>{{ benchmark.name }}</p></div>
             <div class="sparkline" id="spark{{ forloop.counter0 }}" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
           </div>
         {% endfor %}
@@ -34,7 +36,7 @@
 
         {% for benchmark in suite.benchmarks.distinct %}
           <div id="suite{{ suite.id }}-{{ benchmark.name }}" class="metric benchmark has-sparkline">
-            <div class="summary"><p><br/>{{ benchmark.name }}</p></div>
+            <div class="summary"><p>{{ benchmark.name }}</p></div>
             <div class="sparkline" id="spark{{ forloop.counter0 }}" data-metric="{{ benchmark.name }}" data-suite="{{ suite.id }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
           </div>
         {% endfor %}

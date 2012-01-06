@@ -41,35 +41,28 @@ div.metric a {
 
 div.sparkline {
     position: absolute;
-    left: 17%;
-    height: 95%;
-    top: 2.5%;
-    width: 80%;
+    height: 130px;
+    top: 20px;
+    width: 100%;
 }
 
 div.summary {
-    position: absolute;
-    left:0;
-    width:20%;
-    height: 100%;
     background-color: #92CC47;
     color: #000;
     border-top-left-radius: 6px;
-    border-bottom-left-radius: 6px;
-    display:table-cell;
-    vertical-align:middle;
-    font-weight: normal;
+    border-top-right-radius: 6px;
+    height: 20px;
 }
 
 div.metric div.summary {
     font-family: "Helvetica Neue", Helvetica, sans-serif;
     text-align: center;
     margin: 0;
-    padding: 0 12px;
+    padding: 0;
 }
 
-div.metric.has-sparkline div.summary {
-    width: 140px;
+div.metric div.summary p{
+    margin: 0;
 }
 
 div.metric span.timestamp {

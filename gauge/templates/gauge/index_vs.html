@@ -18,9 +18,11 @@
       <span class="branch experiment">{{ suites.0.experiment.name }}</span>
     </h2>
 
+    <p><em>Bechmark time measured in seconds, lower scores are better</em></p>
+
     {% for benchmark in benchmarks %}
-      <div id="suite{{ suite_ids }}-{{ benchmark.name }}" class="metric {{ benchmark.name }} benchmark has-sparkline">
-        <div class="summary"><p><br/>{{ benchmark.name }}</p></div>
+      <div id="suite-{{ benchmark.name }}" class="metric {{ benchmark.name }} benchmark has-sparkline">
+        <div class="summary"><p>{{ benchmark.name }}</p></div>
         <div class="sparkline" id="spark{{ forloop.counter0 }}" data-metric="{{ benchmark.name }}" data-suite="{{ suite_ids }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
       </div>
     {% endfor %}

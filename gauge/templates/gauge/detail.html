@@ -29,6 +29,9 @@
 
   {% endif %}
 
+  <p><em>Bechmark time measured in seconds, lower scores are better</em></p>
+
+
   <div id="graph" data-metric="{{ benchmark.name }}" data-suite="{{ suite_ids }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
   <div id="legend"></div>
 

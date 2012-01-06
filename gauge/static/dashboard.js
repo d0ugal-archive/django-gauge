@@ -26,9 +26,10 @@ $(function () {
         }
 
         e.click(function(){
-
             window.location = url;
-
+        });
+        $('#suite-' + e.data('metric')).click(function(){
+            window.location = url;
         });
 
     });
@@ -55,8 +56,15 @@ $(function () {
 
                 var options = {
                     xaxis: {mode: "time"},
-                    yaxis: {show: true},
-                    grid: {borderWidth: 0, hoverable: true},
+                    yaxis: {
+                        show: true,
+                        ticks: 3
+                    },
+                    grid: {
+                        borderWidth: 0,
+                        hoverable: true,
+                        color: "#2F6E44"
+                    },
                     colors: ["white", "yellow", "black", "orange"],
                     lines: { show: true },
                     legend: {
