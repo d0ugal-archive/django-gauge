@@ -59,7 +59,6 @@ $(function () {
                     grid: {borderWidth: 0, hoverable: true},
                     colors: ["white", "yellow", "black", "orange"],
                     lines: { show: true },
-                    points: { show: true },
                     legend: {
                         show: false
                     }
