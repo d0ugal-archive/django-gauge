@@ -67,6 +67,7 @@ $(function () {
                     },
                     colors: ["white", "yellow", "black", "orange"],
                     lines: { show: true },
+                    points: { show: true },
                     legend: {
                         show: false
                     }
