@@ -69,14 +69,6 @@ $(function () {
             points: { show: true },
             legend: {
                 show: true,
-                labelFormatter: function(string, series){
-                    if (string.indexOf("_base") != -1){
-                        return string.replace("_base", " control");
-                    } else if (string.indexOf("_changed") != -1){
-                        return string.replace("_changed", " experiment");
-                    }
-                    return string;
-                },
                 backgroundColor: 'rgba(0,0,0,0.5)',
                 position: 'sw'
             }

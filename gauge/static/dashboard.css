@@ -120,24 +120,34 @@ p.updated {
     font-size: 2em;
 }
 
+.key.versus{
+    color: #fff;
+}
+
 .key span.control, .key span.experiment{
     font-size: 0.6em;
     padding: 5px;
     color: black;
     display: inline-block;
+    font-weight: 800;
 }
 
 
 .key span.control{
-    font-weight: 800;
     background-color: white;
-    padding: 5px;
 }
 
 .key span.experiment{
-    font-weight: 800;
     background-color: yellow;
-    padding: 5px;
+}
+
+.key.versus.second span.control{
+    background-color: black;
+    color: #fff;
+}
+
+.key.versus.second span.experiment{
+    background-color: orange;
 }
 
 span.branch{

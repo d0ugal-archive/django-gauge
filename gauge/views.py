@@ -14,19 +14,38 @@ from .models import Benchmark, BenchmarkSuite, BenchmarkResult
 @cache_page(60 * 60)
 def index(request, suite_ids=None):
 
+    vs = False
+
     significant = 'significant' in request.GET
 
     if not suite_ids:
         suites = BenchmarkSuite.objects.distinct().filter(
                                     is_active=True, show_on_dashboard=True)
     else:
-        suite_ids = suite_ids.split('+')
-        suites = BenchmarkSuite.objects.filter(pk__in=suite_ids)
+        suite_ids_list = suite_ids.split('+')
+        suites = BenchmarkSuite.objects.filter(pk__in=suite_ids_list)
 
-    return render(request, 'gauge/index.html', {
+        if len(suite_ids_list) > 1:
+            vs = True
+
+    context = {
+        'suite_ids': suite_ids,
         'suites': suites,
         'significant': significant,
-    })
+    }
+
+    if vs:
+        benchmarks = Benchmark.objects.distinct().filter(
+            benchmarksuite__pk__in=suite_ids_list)
+        if significant:
+            benchmarks = benchmarks.filter(benchmarkresult__significant=True)
+        context['benchmarks'] = benchmarks
+
+        template = 'gauge/index_vs.html'
+    else:
+        template = 'gauge/index.html'
+
+    return render(request, template, context)
 
 
 @cache_page(60 * 60)

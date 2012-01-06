@@ -57,7 +57,7 @@ $(function () {
                     xaxis: {mode: "time"},
                     yaxis: {show: true},
                     grid: {borderWidth: 0, hoverable: true},
-                    colors: ["white", "yellow"],
+                    colors: ["white", "yellow", "black", "orange"],
                     lines: { show: true },
                     points: { show: true },
                     legend: {
@@ -68,6 +68,10 @@ $(function () {
                 var benchmark_name = benchmark_data.name;
 
                 var spark = $("#suite" + suite_id + "-" + benchmark_name + " div.sparkline");
+
+                if (spark.length === 0){
+                    spark = $(".metric." + benchmark_name + " div.sparkline");
+                }
 
                 for(var i=0;i<benchmark_data.data.length;i++){
                     for(var y=0; y<benchmark_data.data[i].data.length;y++){
@@ -107,4 +111,5 @@ $(function () {
         });
 
     });
+
 });

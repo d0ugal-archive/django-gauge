@@ -1,0 +1,30 @@
+{% extends "gauge/base.html" %}
+
+{% block extrahead %}
+  <script type="text/javascript" src="{{ STATIC_URL }}dashboard.js" charset="utf-8"></script>
+{% endblock %}
+
+{% block content %}
+
+  <div class="suite" data-suite="{{ suite_ids }}"  data-significant="{% if significant %}1{% else %}0{% endif %}">
+
+    <h2 class="key versus">{{ suites.0.description }}
+      <span class="branch control">{{ suites.0.control.name }}</span>
+      <span class="branch experiment">{{ suites.0.experiment.name }}</span>
+    </h2>
+    <h2 class="key">and</h2>
+    <h2 class="key versus second">{{ suites.1.description }}
+      <span class="branch control">{{ suites.0.control.name }}</span>
+      <span class="branch experiment">{{ suites.0.experiment.name }}</span>
+    </h2>
+
+    {% for benchmark in benchmarks %}
+      <div id="suite{{ suite_ids }}-{{ benchmark.name }}" class="metric {{ benchmark.name }} benchmark has-sparkline">
+        <div class="summary"><p><br/>{{ benchmark.name }}</p></div>
+        <div class="sparkline" id="spark{{ forloop.counter0 }}" data-metric="{{ benchmark.name }}" data-suite="{{ suite_ids }}" data-significant="{% if significant %}1{% else %}0{% endif %}"></div>
+      </div>
+    {% endfor %}
+
+  </div>
+
+{% endblock %}
